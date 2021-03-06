@@ -8,6 +8,8 @@
 
 **US1.2:** As a returning user who has successfully authenticated, I want to be redirected to my user homepage (US3), in order to search for movie recommendations.
 
+---
+
 **US2: As a first-time user, I want to indicate the streaming services I have, the genres I like, and some movies I like, in order to get personalized movie recommendations.**
 
 **Play-By-Play:** I log into the app for the first time and see a page asking what streaming services that I currently am subscribed to. If I do not own any subscriptions I will be able to click the “None” button and be directed to a genre page asking what are my favorite movie genres in order to narrow down the movie recommendations. If I do have subscriptions I will be able to indicate all the services that I own and will also be directed to a genres page asking which are my favorite. After indicating the genres that I like, I will be redirected to a page of some movies and I will indicate the movies that I would like to watch.
@@ -16,9 +18,13 @@
 
 **US2.2:** As a user who has indicated one or more streaming services, I want the app to display movies by streaming service, in order to find movies that I can watch by myself or with friends.
 
+---
+
 **US3: As a user who has indicated one or more streaming services, I want the app to display movies by streaming service, in order to find movies that I can watch by myself or with friends.**
 
 **Play-By-Play:** After I log into the app having been gone through the initial setup, I want to see a list of recommended movies for me in subsequent rows, depicting how these recommendations were made, which would be from the following: Genre I have indicated I preferred, Movies my friends have watched and rated well, Movies I have recently watched, or a Random movie generator. From these list of rows, I should be able to click on any movie image and be taken to US4.
+
+---
 
 **US4: As a user who has shown an interest in a particular movie by clicking on it, I want the app to be able to take into account the streaming services I have told the system that I have in order to let me know where I can watch it based on my subscriptions.**
 
