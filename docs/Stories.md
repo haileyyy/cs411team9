@@ -1,4 +1,4 @@
-### User Stories
+## User Stories
 
 **US1: As a user, I want to log in via Google or Facebook in order to get personalized movie recommendations based on the following user information that will be provided in the app: movies I like, genres I like, services/subscriptions I have.**
 
