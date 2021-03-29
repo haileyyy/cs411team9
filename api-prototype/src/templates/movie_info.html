@@ -5,10 +5,17 @@
 </head>
 <body>
 	<div align="center">
-		<h1> Movie Details </h1>
+		<h1> Movie Sources </h1>
 	</div>
 	<div>
-		
+		<ul>
+			{% for source in movie_sources %}
+			<li>
+				{{source}}
+			</li>
+			{% endfor %}
+		</ul>
+
 	</div>
 </body>
 </html>
