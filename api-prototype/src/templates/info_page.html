@@ -5,7 +5,20 @@
 </head>
 <body>
 	<div align="center">
-		<h1>Here is the info to display: {{ info_to_display }}</h1>
+		<h1> Your Search Results: </h1>
+	</div>
+	<div>
+		<ul>
+		{% for movie in movie_list %}
+			<li>
+				{{movie.title}} - {{movie.description}} 
+				<form action="/movie_info" method="POST" enctype="multipart/form-data" id="movie_detailForm">
+					<input type="hidden" name="imdb_id" value={{movie.id}} id="imdb_id"/>
+					<input type="submit" value="More Details"/>
+				</form>
+			</li>
+		{% endfor %}
+		</ul>
 	</div>
 </body>
 </html>
