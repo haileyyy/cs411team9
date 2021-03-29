@@ -10,10 +10,10 @@ def home():
 def test():
     return "hello world!"
 
-@app.route('/submit',methods=['POST'])
+@app.route('/search',methods=['POST'])
 def submit():
     request_data = request.form
-    return render_template('./info_page.html', info_to_display=request_data['info'])
+    return render_template('./info_page.html', info_to_display=request_data['title'])
 
 if __name__ == "__main__":
     app.debug = False
