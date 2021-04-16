@@ -21,4 +21,4 @@ create table service(
 service_ID int (10) auto_increment,
 service_name varchar(50),
 primary key (service_ID)
-)
+);
