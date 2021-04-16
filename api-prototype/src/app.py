@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template
 from imdb import get_imdb_movie
+from watchmode import *
 
 app = Flask(__name__, template_folder="templates")
 
@@ -20,7 +21,10 @@ def submit():
 @app.route('/movie_info', methods=['POST'])
 def movie_submit():
     request_data = request.form
-    return render_template('./movie_info.html', movie_info=request_data['imdb_id'])
+    watchmode_ID = watchmodeID_from_imdbID(request_data['imdb_id'])
+    watchmode_Sources = sources_from_watchmodeID(watchmode_ID)
+    sources = known_sources(watchmode_Sources)
+    return render_template('./movie_info.html', movie_sources=sources)
 
 if __name__ == "__main__":
     app.debug = False
