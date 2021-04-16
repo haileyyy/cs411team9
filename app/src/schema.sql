@@ -1,3 +1,6 @@
+create database userInfo;
+use userInfo;
+
 create table user (
 user_ID int(10) auto increment,
 user_name varchar(50),
