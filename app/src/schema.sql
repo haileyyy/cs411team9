@@ -2,7 +2,7 @@ create database userInfo;
 use userInfo;
 
 create table user (
-user_ID int(10) auto increment,
+user_ID int(10) auto_increment,
 user_name varchar(50),
 birthdate date, 
 password varchar(10),
@@ -18,7 +18,7 @@ foreign key (user_ID) references user(user_ID)
 ) ;
 
 create table service(
-service_ID int (10) auto increment,
+service_ID int (10) auto_increment,
 service_name varchar(50),
 primary key (service_ID)
 )
