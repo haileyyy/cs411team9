@@ -36,6 +36,25 @@ def movies_from_genres(genres,num):
                         movies[genre[1]] += [[data[i]['id'],data[i]['title']]]
     return movies
 
+def initial_movie_display(movies_from_genres):
+    movies = []
+    titles = []
+    for genre in movies_from_genres:
+        for movie in movies_from_genres[genre]:
+            if movie[1] not in titles:
+                movies += [[genre] + movie]
+                titles += [movie[1]]
+    return movies
+
+def test():
+    # get list of all genres
+    genres = get_genres()
+    # get 3 movies from each genre
+    movie_genre_list = movies_from_genres(genres,3)
+    # create one list of movies from those genres for display, with format [genre, ID, title]
+    return initial_movie_display(movie_genre_list)
+            
+
 
 def default_movies_for_user(genrescore,services, multFactor):
     """takes in list of genrescore from user, users services, and a multFactor and builds up a list of possible movies that are on
