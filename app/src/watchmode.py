@@ -46,6 +46,12 @@ def initial_movie_display(movies_from_genres):
                 titles += [movie[1]]
     return movies
 
+def get_names_from_movies(movies):
+    movielist = []
+    for m in movies:
+        movielist += [m[2]]
+    return movielist
+
 def test():
     # get list of all genres
     genres = get_genres()
