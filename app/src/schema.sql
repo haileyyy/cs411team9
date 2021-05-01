@@ -9,6 +9,12 @@ password varchar(10),
 primary key (user_ID)
 ); 
 
+create table service(
+service_ID int (10) auto_increment,
+service_name varchar(50),
+primary key (service_ID)
+)
+
 create table userService(
 user_ID int (10),
 service_ID int (10),
@@ -16,9 +22,12 @@ primary key (user_ID, service_ID),
 foreign key (service_ID) references service(service_ID),
 foreign key (user_ID) references user(user_ID)
 ) ;
+<<<<<<< HEAD
 
 create table service(
 service_ID int (10) auto_increment,
 service_name varchar(50),
 primary key (service_ID)
 );
+=======
+>>>>>>> f12863294e9266d1d26ef9289cdee38344255731
