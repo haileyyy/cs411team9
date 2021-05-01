@@ -9,13 +9,18 @@
 	</div>
 	<div>
 		<ul>
+		<form action="/results" method="POST" enctype="multipart/form-data" id="movie_detailForm">
 		{% for m in movietitles %}
 			<li>
 				{{m}}
-				<td><input type="checkbox" name="m" />&nbsp;</td>
-
+				
+				<td><input type="checkbox" name="m" value = "{{m}}"" /></td>
+				
+				
 			</li>
 		{% endfor %}
+		<input type = "submit" value = "OK"/>
+		</form>
 		
 		</ul>
 	</div>

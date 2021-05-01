@@ -25,6 +25,7 @@ def movie_submit():
     watchmode_Sources = sources_from_watchmodeID(watchmode_ID)
     sources = known_sources(watchmode_Sources)
     return render_template('./movie_info.html', movie_sources=sources)
+    
 
 if __name__ == "__main__":
     app.debug = False

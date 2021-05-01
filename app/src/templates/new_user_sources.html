@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Pick your streaming services:</title>
+</head>
+<body>
+	<div align="center">
+		<h1> Services </h1>
+	</div>
+	<div>
+		<ul>
+		<form action="/update_user_service" method="POST" enctype="multipart/form-data" id="stream_services_form" name ="streaming_services_form">
+		{% for s in streaming_services %}
+			<li>
+				{{s}}
+				
+				<td><input type="checkbox" name="s" value = "{{s}}" /></td>
+				
+				
+			</li>
+		{% endfor %}
+		<input type = "submit" value = "OK"/>
+		</form>
+		
+		</ul>
+	</div>
+</body>
+</html>
