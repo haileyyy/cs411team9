@@ -1,4 +1,7 @@
+# Directories
 */env/
 
+# Files
+*.pyc
 secrets.py
 __pycache__
