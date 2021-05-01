@@ -60,7 +60,11 @@ def new_user_sources_submit():
     print(rows)
     return render_template('./new_user_sources.html',streaming_services=services)
 
-
+@app.route('/update_user_service', methods = ['GET','POST'])
+def update_user_service():
+    request_data = request.form.getlist("s")
+    print(request_data)
+    return render_template('./results.html')
 
 @app.route('/results', methods = ['GET','POST'])
 def user_submit():

@@ -9,7 +9,7 @@
 	</div>
 	<div>
 		<ul>
-		<form action="/results" method="POST" enctype="multipart/form-data" id="stream_services_form">
+		<form action="/update_user_service" method="POST" enctype="multipart/form-data" id="stream_services_form" name ="streaming_services_form">
 		{% for s in streaming_services %}
 			<li>
 				{{s}}
