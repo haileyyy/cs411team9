@@ -36,6 +36,7 @@ def movies_from_genres(genres,num):
                         movies[genre[1]] += [[data[i]['id'],data[i]['title']]]
     return movies
 
+
 def initial_movie_display(movies_from_genres):
     movies = []
     titles = []
