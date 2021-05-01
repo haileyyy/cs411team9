@@ -3,9 +3,8 @@ use userInfo;
 
 create table user (
 user_ID int(10) auto_increment,
-user_name varchar(50),
-birthdate date, 
-password varchar(10),
+email varchar(50),
+setup_complete boolean default 0,
 primary key (user_ID)
 ); 
 
@@ -28,8 +27,6 @@ genre_ID int(10) auto_increment,
 genre_name varchar(50),
 primary key (genre_ID)
 );
-
-create table
 
 create table userScore(
 user_ID int(10),
