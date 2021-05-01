@@ -3,7 +3,7 @@ import json
 from  secrets import SECRETS
 
 watchmode_api_key = SECRETS['watchmode_api_key']
-TMDB_api_key = SECRETS['TMDB_api_key']
+TMDB_api_key = SECRETS['tmdb_api_key']
 
 
 def get_genres():
