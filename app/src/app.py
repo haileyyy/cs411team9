@@ -55,7 +55,6 @@ def new_user_sources_submit():
     for row in rows:
         services.append(row[1])
     print(rows)
-    services = ['Netflix','Hulu', 'HBO Max']
     return render_template('./new_user_sources.html',streaming_services=services)
 
 @app.route('/update_user_service', methods = ['GET','POST'])
