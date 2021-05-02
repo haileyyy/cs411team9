@@ -1,9 +1,32 @@
 import requests
 import json
+import math
+import random
 from  secrets import SECRETS
 
 watchmode_api_key = SECRETS['watchmode_api_key']
 TMDB_api_key = SECRETS['TMDB_api_key']
+
+
+def clean_genres(genrelist):
+    genrescores = {}
+    for genreinput in genrelist:
+        genreinput = genreinput.replace('[','')
+        genreinput = genreinput.replace(']','')
+        genreinput = genreinput.replace(' ','')
+        genreinput = genreinput.split(',')
+        for genre in genreinput:
+            if genre not in genrescores:
+                genrescores[genre] = 1
+            else:
+                genrescores[genre] += 1
+    return genrescores
+
+def update_userscores(userscore, genrescores):
+    for genre in genrescores:
+        for x in range(genrescores[genre]):
+            userscore[genre] += 1
+    return userscore
 
 
 def get_genres():
@@ -39,13 +62,13 @@ def movies_from_genres(genres,num):
 
 def initial_movie_display():
     genres = get_genres()
-    genrescore = {}
+    userscore = {}
     for genre in genres:
-       genrescore[genre[0]] = 0.05 
+       userscore[genre[0]] = 5
     services = []
     num_movies = 30
     watched_movies = []
-    return default_movies_for_user(genrescore,services, num_movies, watched_movies)
+    return default_movies_for_user(userscore,services, num_movies, watched_movies)
 
 
 def get_names_from_movies(movies):
@@ -64,15 +87,22 @@ def test():
             
 
 
-def default_movies_for_user(genrescore,services, num_movies, watched_movies):
+def default_movies_for_user(userscore,services, num_movies, watched_movies):
     """takes in list of genrescore from user, users services, and a multFactor and builds up a list of possible movies that are on
         the users services. The number of movies from each genre is the multFactor * their genrescore for that genre"""
     
-    movies = {}
-
-    
+    movies = []
+    alreadyseen = []
+    total = 0
+    genrescore = userscore.copy()
     for genre in genrescore:
-        genrescore[genre] = int((genrescore[genre] * num_movies) // 1)
+        total += genrescore[genre]
+
+    for genre in genrescore:
+        genrescore[genre] = genrescore[genre] / total
+
+    for genre in genrescore:
+        genrescore[genre] = math.ceil(genrescore[genre] * num_movies)
 
         moviessofar =  0
         services_string = ','.join(services)
@@ -87,19 +117,23 @@ def default_movies_for_user(genrescore,services, num_movies, watched_movies):
             data = response.json()['results']
 
             for result in data:
-                if result['title'] not in movies and result['title'] not in watched_movies and moviessofar < genrescore[genre]:
+                if result['title'] not in alreadyseen and result['title'] not in watched_movies and moviessofar < genrescore[genre]:
                     movie = {}
                     movie['id'] = result['id']
+                    movie['title'] = result['title']
                     movie['genre_ids'] = result['genre_ids']
                     sources = sources_from_tmdbID(movie['id'])
                     if sources != 'None':
                         sources_with_service = [sources[x] for x in sources if str(sources[x]) in services] 
                         movie['source'] = sources_with_service
-                        movies[result['title']] = movie
+                        movies.append(movie)
+                        alreadyseen.append(result['title'])
                         moviessofar += 1
             page += 1
-            
-            
+
+    random.shuffle(movies)
+    if len(movies) - num_movies > 0:
+        return movies[:-(len(movies) - num_movies)]
     return movies
 
 

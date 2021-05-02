@@ -30,6 +30,7 @@ def test():
 def submit():
     request_data = request.form
     movie_list = get_imdb_movie(request_data['title'])
+    print(movie_list)
     return render_template('./info_page.html', movie_list=movie_list)
 
 @app.route('/movie_info', methods=['POST'])
@@ -41,12 +42,8 @@ def movie_submit():
 
 @app.route('/new_user', methods=['GET', 'POST'])
 def genre_submit():
-    request_data = request.form
-    genres = get_genres()
-    scores = [0] * len(genres)
-    movies = movies_from_genres(genres,3)
-    display_movies = initial_movie_display(movies)
-    return render_template('./new_user_genres.html', movietitles = get_names_from_movies(display_movies))
+    display_movies = initial_movie_display()
+    return render_template('./new_user_genres.html', movietitles = display_movies)
 
 
 @app.route('/new_user_sources', methods = ['GET','POST'])
@@ -58,6 +55,7 @@ def new_user_sources_submit():
     for row in rows:
         services.append(row[1])
     print(rows)
+    services = ['Netflix','Hulu', 'HBO Max']
     return render_template('./new_user_sources.html',streaming_services=services)
 
 @app.route('/update_user_service', methods = ['GET','POST'])
@@ -69,10 +67,13 @@ def update_user_service():
 @app.route('/results', methods = ['GET','POST'])
 def user_submit():
     request_data = request.form.getlist("m")
-    print(request_data)
+    genrescores = clean_genres(request_data)
+    genres = get_genres()
+    userscore = {}
+    for genre in genres:
+       userscore[genre[0]] = 5
+    new_userscores = update_userscores(userscore,genrescores)
     return render_template('./results.html', resultList = request_data)
-
-
 
 if __name__ == "__main__":
     app.debug = False
