@@ -9,12 +9,12 @@
 	</div>
 	<div>
 		<ul>
-		<form action="/results" method="POST" enctype="multipart/form-data" id="movie_detailForm">
-		{% for m in movietitles %}
+		<form action="/new_user/genres/submit" method="POST" enctype="multipart/form-data" id="movie_detailForm">
+		{% for movie in movietitles %}
 			<li>
-				{{m.title}}
+				{{movie.title}}
 				
-				<td><input type="checkbox" name="m" value = "{{m.genre_ids}}" /></td>
+				<td><input type="checkbox" name="movie" value = "{{movie.genre_ids}}" /></td>
 				
 				
 			</li>

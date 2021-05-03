@@ -50,7 +50,6 @@ def update_userscores(userscore, genrescores):
             userscore[genre] += 1
     return userscore
 
-
 def get_genres():
     """ Finds genres on themoviedb api"""
     response = requests.get("https://api.themoviedb.org/3/genre/movie/list?api_key=" + tmdb_api_key + "&language=en-US")
@@ -90,7 +89,7 @@ def initial_movie_display():
     services = []
     num_movies = 30
     watched_movies = []
-    return default_movies_for_user(userscore,services, num_movies, watched_movies)
+    return default_movies_for_user(userscore, services, num_movies, watched_movies)
 
 
 def get_names_from_movies(movies):
@@ -107,8 +106,6 @@ def test():
     gscore['12'] = 0.5
     print(default_movies_for_user(gscore,services,10,watched_movies))
             
-
-
 def default_movies_for_user(userscore, services, num_movies, watched_movies):
     """takes in list of genrescore from user, users services, and a multFactor and builds up a list of possible movies that are on
         the users services. The number of movies from each genre is the multFactor * their genrescore for that genre"""
@@ -127,13 +124,12 @@ def default_movies_for_user(userscore, services, num_movies, watched_movies):
         genrescore[genre] = math.ceil(genrescore[genre] * num_movies)
 
         moviessofar =  0
-        services_string = ','.join(services)
+        services_string = '|'.join(services)
         watchprovidersstring = "&with_watch_providers=" + services_string + "&watch_region=US"
         if services == []:
             watchprovidersstring = ''
         page = 1
         while moviessofar < genrescore[genre]:
-            
             response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + tmdb_api_key +
                                     "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) + "&with_genres=" +
                                     genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")
