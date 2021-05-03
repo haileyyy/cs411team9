@@ -87,7 +87,7 @@ def test():
             
 
 
-def default_movies_for_user(userscore,services, num_movies, watched_movies):
+def default_movies_for_user(userscore, services, num_movies, watched_movies):
     """takes in list of genrescore from user, users services, and a multFactor and builds up a list of possible movies that are on
         the users services. The number of movies from each genre is the multFactor * their genrescore for that genre"""
     
@@ -111,6 +111,7 @@ def default_movies_for_user(userscore,services, num_movies, watched_movies):
             watchprovidersstring = ''
         page = 1
         while moviessofar < genrescore[genre]:
+            
             response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + tmdb_api_key +
                                     "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) + "&with_genres=" +
                                     genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")

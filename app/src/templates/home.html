@@ -2,10 +2,33 @@
     <html lang="en">
       <head>
         <meta charset="UTF-8">
-        <title>Logged in</title>
+        <title>Main Page</title>
       </head>
     <body>
-      <h1>You are now logged in!</h1>
+      <h1>Here Are Some Movie Recommendations!</h1>
+      {% for m in movies %}
+        <div class="movie" style="display:flex;">
+          <div>
+            <img src='{{m.image}}' width=200 height=300/>
+          </div>
+          <div style="margin-left: 10px">
+            <h2>{{m.title}}</h2>
+            <br>
+            {% for g in m.genre_names %}
+              {{g[0]}}, 
+            {% endfor %}
+            <br>
+            <br>
+            {% for s in m.service_names %}
+              {{s[0]}}, 
+            {% endfor %}
+            <br>
+
+          </div>
+          
+        </div>
+		  {% endfor %}
+
       <a href='/logout'>Logout</a>
     </body>
 </html>

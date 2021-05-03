@@ -4,7 +4,7 @@ from watchmode import *
 from flask import Flask, redirect, url_for, render_template, make_response, request
 from flask_dance.contrib.google import make_google_blueprint, google
 from flaskext.mysql import MySQL
-import os
+import os, base64
 
 app = Flask(__name__, template_folder="templates")
 
@@ -75,6 +75,49 @@ def logout():
     resp.set_cookie('user_ID', '', expires=0)
     return resp
 
+@app.route('/home', methods=['GET'])
+def get_movies():
+    cursor = conn.cursor()
+    user_ID = request.cookies.get('user_ID', None)
+
+    services = []
+    cursor.execute('SELECT service_ID FROM userService WHERE user_ID="{0}"'.format(user_ID))
+    rows = cursor.fetchall()
+    for row in rows:
+        services.append(str(row[0]))
+    
+    watchedMovies = []
+    cursor.execute('SELECT movie_ID FROM watchedMovies WHERE user_ID="{0}"'.format(user_ID))
+    rows = cursor.fetchall()
+    for row in rows:
+        watchedMovies.append(row[0])
+    
+    userScore = {}
+    cursor.execute('SELECT genre_ID, user_score FROM userScore WHERE user_ID="{0}"'.format(user_ID))
+    rows = cursor.fetchall()
+    for row in rows:
+        userScore[str(row[0])] = row[1]
+    
+    movies = default_movies_for_user(userScore, services, 10, watchedMovies)
+    
+    for x in movies:
+        genre_names = []
+        service_names = []
+        for y in x['genre_ids']:
+            cursor.execute('SELECT genre_name FROM genre WHERE genre_ID="{0}"'.format(y))
+            rows = cursor.fetchall()
+            for row in rows:
+                genre_names.append(row)
+            x['genre_names'] = genre_names
+        for y in x['source']:
+            cursor.execute('SELECT service_name FROM service WHERE service_ID="{0}"'.format(y))
+            rows = cursor.fetchall()
+            for row in rows:
+                service_names.append(row)
+            x['service_names'] = service_names
+
+    return render_template('./home.html', movies=movies, base64 = base64)
+
 @app.route('/search',methods=['POST'])
 def submit():
     request_data = request.form
@@ -121,6 +164,26 @@ def user_submit():
        userscore[genre[0]] = 5
     new_userscores = update_userscores(userscore,genrescores)
     return render_template('./results.html', resultList = request_data)
+
+'''
+@app.route('/insert_record', methods = ['GET'])
+def insert_record():
+    array = [['384']]
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO userService (user_ID, service_ID) VALUES ('{0}', '{1}')".format('4', '384'))
+    conn.commit()
+    print("Success")
+    return render_template('./results.html')
+
+@app.route('/check_record', methods = ['GET'])
+def check_record():
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM userService")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+    return render_template('./results.html')
+'''
 
 if __name__ == "__main__":
     app.debug = True
