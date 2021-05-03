@@ -4,26 +4,35 @@
         <meta charset="UTF-8">
         <title>Main Page</title>
       </head>
-    <body>
-      <h1>Here Are Some Movie Recommendations!</h1>
+    <body style="background-color:black; color:#40e0d0">
+      <h1 style="position:center">Here Are Some Movie Recommendations!</h1>
       {% for m in movies %}
         <div class="movie" style="display:flex;">
           <div>
             <img src='{{m.image}}' width=200 height=300/>
           </div>
-          <div style="margin-left: 10px">
+          <div style="margin-left: 20px">
             <h2>{{m.title}}</h2>
             <br>
+            GENRES: 
             {% for g in m.genre_names %}
               {{g[0]}}, 
             {% endfor %}
             <br>
             <br>
+            SERVICES:
             {% for s in m.service_names %}
               {{s[0]}}, 
             {% endfor %}
             <br>
-
+            <br>
+            <div style="float:right">
+              <form action="/movie_info" method="POST" enctype="multipart/form-data" id="movie_detail" name ="movie_detail">
+                <input type="hidden" id="tmdb_id" name="tmdb_id" value="{{m.id}}">
+                <button type="submit" value = "Submit">More Details</button>
+              </form>
+            </div>
+            
           </div>
           
         </div>
