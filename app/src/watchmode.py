@@ -115,13 +115,13 @@ def default_movies_for_user(userscore,services, num_movies, watched_movies):
                                     "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) + "&with_genres=" +
                                     genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")
             data = response.json()['results']
-
             for result in data:
                 if result['title'] not in alreadyseen and result['title'] not in watched_movies and moviessofar < genrescore[genre]:
                     movie = {}
                     movie['id'] = result['id']
                     movie['title'] = result['title']
                     movie['genre_ids'] = result['genre_ids']
+                    movie['image'] = 'https://image.tmdb.org/t/p/w500' + result['poster_path']
                     sources = sources_from_tmdbID(movie['id'])
                     if sources != 'None':
                         sources_with_service = [sources[x] for x in sources if str(sources[x]) in services] 
