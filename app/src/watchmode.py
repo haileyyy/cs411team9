@@ -117,7 +117,7 @@ def default_movies_for_user(userscore, services, num_movies, watched_movies):
                                     genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")
             data = response.json()['results']
             for result in data:
-                if result['title'] not in alreadyseen and result['title'] not in watched_movies and moviessofar < genrescore[genre]:
+                if result['title'] not in alreadyseen and result['id'] not in watched_movies and moviessofar < genrescore[genre]:
                     movie = {}
                     movie['id'] = result['id']
                     movie['title'] = result['title']
