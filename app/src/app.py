@@ -42,7 +42,7 @@ def isEmailUnique(email):
 @app.route('/')
 def index():
     if request.cookies.get('user_ID', None):
-        return render_template('home.html')
+        return redirect('home')
     elif google.authorized:
         google_resp = google.get('/oauth2/v1/userinfo')
         assert google_resp.ok, google_resp.text
@@ -98,7 +98,7 @@ def get_movies():
     for row in rows:
         userScore[str(row[0])] = row[1]
     
-    movies = default_movies_for_user(userScore, services, 10, watchedMovies)
+    movies = default_movies_for_user(userScore, services, 2, watchedMovies)
     
     for x in movies:
         genre_names = []
@@ -109,6 +109,7 @@ def get_movies():
             for row in rows:
                 genre_names.append(row)
             x['genre_names'] = genre_names
+
         for y in x['source']:
             cursor.execute('SELECT service_name FROM service WHERE service_ID="{0}"'.format(y))
             rows = cursor.fetchall()
@@ -126,11 +127,12 @@ def submit():
     return render_template('./info_page.html', movie_list=movie_list)
 
 @app.route('/movie_info', methods=['POST'])
-def movie_submit():
+def movie_detail():
     request_data = request.form
-    tmdb_ID = tmdbID_from_imdbID(request_data['imdb_id'])
-    sources = sources_from_tmdbID(tmdb_ID)
-    return render_template('./movie_info.html', movie_sources=sources)
+    #tmdb_ID = tmdbID_from_imdbID(request_data['imdb_id'])
+
+    sources = sources_from_tmdbID(request.form['tmdb_ID'])
+    return render_template('./movie_info.html', movie_sources=sources, movie_ID=request.form['tmdb_ID'])
 
 @app.route('/new_user', methods=['GET', 'POST'])
 def genre_submit():
@@ -165,6 +167,19 @@ def user_submit():
     new_userscores = update_userscores(userscore,genrescores)
     return render_template('./results.html', resultList = request_data)
 
+@app.route('/update_watched_movies', methods = ['POST'])
+def update_watched_movies():
+    request_data = request.form
+    print(request_data)
+    if (request.form['watched'] == "Yes"):
+        cursor = conn.cursor()
+        if (request.form['liked'] == "Yes"):
+            cursor.execute("INSERT into watchedMovies (user_ID, movie_ID, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_ID', None), request.form["movie_ID"], 1))
+        else:
+            cursor.execute("INSERT into watchedMovies (user_ID, movie_ID, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_ID', None), request.form["movie_ID"], 0))
+        conn.commit()
+    return redirect('home')
+
 '''
 @app.route('/insert_record', methods = ['GET'])
 def insert_record():
@@ -174,16 +189,16 @@ def insert_record():
     conn.commit()
     print("Success")
     return render_template('./results.html')
-
+'''
 @app.route('/check_record', methods = ['GET'])
 def check_record():
     cursor = conn.cursor()
-    cursor.execute("SELECT * FROM userService")
+    cursor.execute("SELECT * FROM watchedMovies")
     rows = cursor.fetchall()
     for row in rows:
         print(row)
     return render_template('./results.html')
-'''
+
 
 if __name__ == "__main__":
     app.debug = True
