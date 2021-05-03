@@ -5,7 +5,7 @@ import random
 from  secrets import SECRETS
 
 watchmode_api_key = SECRETS['watchmode_api_key']
-TMDB_api_key = SECRETS['TMDB_api_key']
+tmdb_api_key = SECRETS['tmdb_api_key']
 
 
 def clean_genres(genrelist):
@@ -31,7 +31,7 @@ def update_userscores(userscore, genrescores):
 
 def get_genres():
     """ Finds genres on themoviedb api"""
-    response = requests.get("https://api.themoviedb.org/3/genre/movie/list?api_key=" + TMDB_api_key + "&language=en-US")
+    response = requests.get("https://api.themoviedb.org/3/genre/movie/list?api_key=" + tmdb_api_key + "&language=en-US")
     
     if response.status_code == 200:
         data = response.json()
@@ -40,7 +40,7 @@ def get_genres():
             genres += [[str(genre.get("id")), genre.get('name')]]
         return genres
     else:
-        raise Exception('TMDB API gave status code {}'.format(response.status_code))
+        raise Exception('tmdb API gave status code {}'.format(response.status_code))
 
 def movies_from_genres(genres,num):
     """Returns num movies from each listed genre"""
@@ -48,7 +48,7 @@ def movies_from_genres(genres,num):
     for genre in genres:
         
         if genre[0] != 'None':
-            response = requests.get("https://api.themoviedb.org/3/genre/" + genre[0] + '/movies?api_key=' + TMDB_api_key)
+            response = requests.get("https://api.themoviedb.org/3/genre/" + genre[0] + '/movies?api_key=' + tmdb_api_key)
             
             if response.status_code == 200:
                 data = response.json()['results']
@@ -111,7 +111,7 @@ def default_movies_for_user(userscore,services, num_movies, watched_movies):
             watchprovidersstring = ''
         page = 1
         while moviessofar < genrescore[genre]:
-            response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + TMDB_api_key +
+            response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + tmdb_api_key +
                                     "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) + "&with_genres=" +
                                     genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")
             data = response.json()['results']
@@ -139,9 +139,9 @@ def default_movies_for_user(userscore,services, num_movies, watched_movies):
 
 def tmdbID_from_imdbID(imdbID):
     """
-    Takes in imdbID as string, returns TMDB ID as string
+    Takes in imdbID as string, returns tmdb ID as string
     """
-    response = requests.get("https://api.themoviedb.org/3/find/" + imdbID + "?api_key=" + TMDB_api_key + '&language=en-US&external_source=imdb_id')
+    response = requests.get("https://api.themoviedb.org/3/find/" + imdbID + "?api_key=" + tmdb_api_key + '&language=en-US&external_source=imdb_id')
 
     if response.status_code == 200:
         data = response.json()
@@ -150,13 +150,13 @@ def tmdbID_from_imdbID(imdbID):
         else:
             return "Not found in That Movie database"
     else:
-        raise Exception('TMDB API gave status code {}'.format(response.status_code))
+        raise Exception('tmdb API gave status code {}'.format(response.status_code))
 
 def sources_from_tmdbID(tmdbID):
     """
     Takes in tmdbID as string, returns dictionary of sources 
     """
-    response = requests.get("https://api.themoviedb.org/3/movie/" + str(tmdbID) + '/watch/providers?api_key=' + TMDB_api_key)
+    response = requests.get("https://api.themoviedb.org/3/movie/" + str(tmdbID) + '/watch/providers?api_key=' + tmdb_api_key)
 
     if response.status_code == 200:
         data = response.json()
@@ -172,7 +172,7 @@ def sources_from_tmdbID(tmdbID):
             services[source['provider_name']] = source['provider_id']
         return services
     else:
-        raise Exception('TMDB API gave status code  {}'.format(response.status_code))
+        raise Exception('tmdb API gave status code  {}'.format(response.status_code))
 
 
         
