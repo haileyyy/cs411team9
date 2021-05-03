@@ -63,8 +63,11 @@ def movies_from_genres(genres,num):
 def initial_movie_display():
     genres = get_genres()
     userscore = {}
+    l = []
     for genre in genres:
        userscore[genre[0]] = 5
+       l.append(genre)
+    print(l)
     services = []
     num_movies = 30
     watched_movies = []
@@ -116,7 +119,7 @@ def default_movies_for_user(userscore,services, num_movies, watched_movies):
                                     genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")
             data = response.json()['results']
             for result in data:
-                if result['title'] not in alreadyseen and result['title'] not in watched_movies and moviessofar < genrescore[genre]:
+                if result['title'] not in alreadyseen and result['id'] not in watched_movies and moviessofar < genrescore[genre]:
                     movie = {}
                     movie['id'] = result['id']
                     movie['title'] = result['title']
