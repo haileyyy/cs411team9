@@ -4,12 +4,17 @@ import math
 import random
 from  secrets import SECRETS
 
+imdb_api_key = SECRETS['imdb_api_key']
 watchmode_api_key = SECRETS['watchmode_api_key']
 tmdb_api_key = SECRETS['tmdb_api_key']
 
 
 def movie_from_id(movieid):
+    get_imdbid = requests.get("https://api.themoviedb.org/3/movie/" + str(movieid) + "/external_ids?api_key=" + tmdb_api_key)
+    imdb_id =  get_imdbid.json()['imdb_id']
     response = requests.get("https://api.themoviedb.org/3/movie/" + str(movieid) + "?api_key=" + tmdb_api_key + "&language=en-US")
+    imdb_rating = requests.get('https://imdb-api.com/en/API/Ratings/' + imdb_api_key + '/' + imdb_id)
+    ratings = imdb_rating.json()
     if response.status_code == 200:
         data = response.json()
         movie = {}
@@ -20,6 +25,8 @@ def movie_from_id(movieid):
             list_genres.append(genre['id'])
         movie['genre_ids'] = list_genres
         movie['title'] = data['title']
+        movie['description'] = data['overview']
+        movie['imdb_rating'] = ratings['imDb']
         movie['image'] = 'https://image.tmdb.org/t/p/w500' + data['poster_path']
         sources = sources_from_tmdbID(movieid)
         list_sources = []
