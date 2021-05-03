@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Pick some movies you're interested in!</title>
+</head>
+<body>
+	<div align="center">
+		<h1> Movies </h1>
+	</div>
+	<div>
+		<ul>
+		<form action="/results" method="POST" enctype="multipart/form-data" id="movie_detailForm">
+		{% for m in movietitles %}
+			<li>
+				{{m.title}}
+				
+				<td><input type="checkbox" name="m" value = "{{m.genre_ids}}" /></td>
+				
+				
+			</li>
+		{% endfor %}
+		<input type = "submit" value = "OK"/>
+		</form>
+		
+		</ul>
+	</div>
+</body>
+</html>
