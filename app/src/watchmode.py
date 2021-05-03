@@ -8,6 +8,28 @@ watchmode_api_key = SECRETS['watchmode_api_key']
 tmdb_api_key = SECRETS['tmdb_api_key']
 
 
+def movie_from_id(movieid):
+    response = requests.get("https://api.themoviedb.org/3/movie/" + str(movieid) + "?api_key=" + tmdb_api_key + "&language=en-US")
+    if response.status_code == 200:
+        data = response.json()
+        movie = {}
+        movie['id'] = str(movieid)
+        genres = data['genres']
+        list_genres = []
+        for genre in genres:
+            list_genres.append(genre['id'])
+        movie['genre_ids'] = list_genres
+        movie['title'] = data['title']
+        movie['image'] = 'https://image.tmdb.org/t/p/w500' + data['poster_path']
+        sources = sources_from_tmdbID(movieid)
+        list_sources = []
+        for source in sources:
+            list_sources.append(str(sources[source]))
+        movie['source'] = list_sources
+        return movie
+    else:
+        return 'No movie found'
+
 def clean_genres(genrelist):
     genrescores = {}
     for genreinput in genrelist:
