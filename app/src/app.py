@@ -33,7 +33,6 @@ conn = mysql.connect()
 cursor = conn.cursor()
 
 def isEmailUnique(email):
-    cursor = conn.cursor()
     if cursor.execute('SELECT email FROM user WHERE email = "{0}"'.format(email)):
         return False
     else:
@@ -41,8 +40,8 @@ def isEmailUnique(email):
 
 @app.route('/')
 def index():
-    if request.cookies.get('user_ID', None):
-        return render_template('home.html')
+    if request.cookies.get('user_id', None):
+        return redirect('/home')
     elif google.authorized:
         google_resp = google.get('/oauth2/v1/userinfo')
         assert google_resp.ok, google_resp.text
@@ -54,12 +53,12 @@ def index():
             cursor.execute('INSERT INTO user (email) VALUES ("{}")'.format(email))
             conn.commit()
 
-        cursor.execute('SELECT user_ID FROM user WHERE email="{}"'.format(email))
+        cursor.execute('SELECT user_id FROM user WHERE email="{}"'.format(email))
         for x in cursor:
-            user_ID = x[0]
+            user_id = x[0]
 
-        resp = make_response(render_template('home.html'))
-        resp.set_cookie('user_ID', str(user_ID))
+        resp = make_response(redirect('/home'))
+        resp.set_cookie('user_id', str(user_id))
 
         return resp
     else:
@@ -72,28 +71,32 @@ def login():
 @app.route('/logout')
 def logout():
     resp = make_response(render_template('logout.html'))
-    resp.set_cookie('user_ID', '', expires=0)
+    resp.set_cookie('user_id', '', expires=0)
     return resp
 
 @app.route('/home', methods=['GET'])
 def get_movies():
-    cursor = conn.cursor()
-    user_ID = request.cookies.get('user_ID', None)
+    user_id = request.cookies.get('user_id', None)
+
+    cursor.execute('SELECT setup_complete FROM user WHERE user_id="{0}"'.format(user_id))
+    for row in cursor:
+        if not row[0]:
+            return redirect('/new_user/services')
 
     services = []
-    cursor.execute('SELECT service_ID FROM userService WHERE user_ID="{0}"'.format(user_ID))
+    cursor.execute('SELECT service_id FROM userService WHERE user_id="{0}"'.format(user_id))
     rows = cursor.fetchall()
     for row in rows:
         services.append(str(row[0]))
     
     watchedMovies = []
-    cursor.execute('SELECT movie_ID FROM watchedMovies WHERE user_ID="{0}"'.format(user_ID))
+    cursor.execute('SELECT movie_id FROM watchedMovies WHERE user_id="{0}"'.format(user_id))
     rows = cursor.fetchall()
     for row in rows:
         watchedMovies.append(row[0])
     
     userScore = {}
-    cursor.execute('SELECT genre_ID, user_score FROM userScore WHERE user_ID="{0}"'.format(user_ID))
+    cursor.execute('SELECT genre_id, user_score FROM userScore WHERE user_id="{0}"'.format(user_id))
     rows = cursor.fetchall()
     for row in rows:
         userScore[str(row[0])] = row[1]
@@ -104,13 +107,13 @@ def get_movies():
         genre_names = []
         service_names = []
         for y in x['genre_ids']:
-            cursor.execute('SELECT genre_name FROM genre WHERE genre_ID="{0}"'.format(y))
+            cursor.execute('SELECT genre_name FROM genre WHERE genre_id="{0}"'.format(y))
             rows = cursor.fetchall()
             for row in rows:
                 genre_names.append(row)
             x['genre_names'] = genre_names
         for y in x['source']:
-            cursor.execute('SELECT service_name FROM service WHERE service_ID="{0}"'.format(y))
+            cursor.execute('SELECT service_name FROM service WHERE service_id="{0}"'.format(y))
             rows = cursor.fetchall()
             for row in rows:
                 service_names.append(row)
@@ -128,62 +131,51 @@ def submit():
 @app.route('/movie_info', methods=['POST'])
 def movie_submit():
     request_data = request.form
-    tmdb_ID = tmdbID_from_imdbID(request_data['imdb_id'])
-    sources = sources_from_tmdbID(tmdb_ID)
+    tmdb_id = tmdbid_from_imdbid(request_data['imdb_id'])
+    sources = sources_from_tmdbid(tmdb_id)
     return render_template('./movie_info.html', movie_sources=sources)
 
-@app.route('/new_user', methods=['GET', 'POST'])
-def genre_submit():
+@app.route('/new_user/services', methods = ['GET'])
+def new_user_services():
+    services=[]
+    cursor.execute('SELECT * FROM service')
+    for row in cursor:
+        services.append(row)
+    return render_template('./new_user_sources.html',streaming_services=services)
+
+@app.route('/new_user/services/submit', methods = ['POST'])
+def new_user_services_submit():
+    user_id = request.cookies.get('user_id', None)
+    request_data = request.form.getlist('service')
+    for service_id in request_data:
+        cursor.execute('INSERT INTO userService VALUES ({0}, {1})'.format(user_id, service_id))
+    conn.commit()
+    return redirect('/new_user/genres')
+
+@app.route('/new_user/genres', methods=['GET'])
+def new_user_genres():
     display_movies = initial_movie_display()
     return render_template('./new_user_genres.html', movietitles = display_movies)
 
-@app.route('/new_user_sources', methods = ['GET','POST'])
-def new_user_sources_submit():
-    request_data = request.form
-    services=[]
-    cursor.execute("SELECT * FROM service")
-    rows=cursor.fetchall()
-    for row in rows:
-        services.append(row[1])
-    print(rows)
-    return render_template('./new_user_sources.html',streaming_services=services)
+@app.route('/new_user/genres/submit', methods=['POST'])
+def new_user_genres_submit():
+    user_id = request.cookies.get('user_id', None)
 
-@app.route('/update_user_service', methods = ['GET','POST'])
-def update_user_service():
-    request_data = request.form.getlist("s")
-    print(request_data)
-    return render_template('./results.html')
-
-@app.route('/results', methods = ['GET','POST'])
-def user_submit():
-    request_data = request.form.getlist("m")
+    request_data = request.form.getlist('movie')
     genrescores = clean_genres(request_data)
     genres = get_genres()
     userscore = {}
     for genre in genres:
        userscore[genre[0]] = 5
-    new_userscores = update_userscores(userscore,genrescores)
-    return render_template('./results.html', resultList = request_data)
+    new_userscores = update_userscores(userscore, genrescores)
 
-'''
-@app.route('/insert_record', methods = ['GET'])
-def insert_record():
-    array = [['384']]
-    cursor = conn.cursor()
-    cursor.execute("INSERT INTO userService (user_ID, service_ID) VALUES ('{0}', '{1}')".format('4', '384'))
+    for (genre_id, score) in new_userscores.items():
+        cursor.execute('INSERT INTO userScore VALUES ({0}, {1}, {2}) ON DUPLICATE KEY UPDATE user_score={2}'.format(user_id, genre_id, score))
+
+    cursor.execute('UPDATE user SET setup_complete=1 WHERE user_id={0}'.format(user_id))
     conn.commit()
-    print("Success")
-    return render_template('./results.html')
 
-@app.route('/check_record', methods = ['GET'])
-def check_record():
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM userService")
-    rows = cursor.fetchall()
-    for row in rows:
-        print(row)
-    return render_template('./results.html')
-'''
+    return redirect('/home')
 
 if __name__ == "__main__":
     app.debug = True
