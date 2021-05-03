@@ -63,11 +63,8 @@ def movies_from_genres(genres,num):
 def initial_movie_display():
     genres = get_genres()
     userscore = {}
-    l = []
     for genre in genres:
        userscore[genre[0]] = 5
-       l.append(genre)
-    print(l)
     services = []
     num_movies = 30
     watched_movies = []
