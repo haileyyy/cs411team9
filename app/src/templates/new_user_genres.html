@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<title>Pick some movies you're interested in!</title>
+	<title>Pick some genres you're interested in!</title>
 </head>
 <body style="background-color:black; color:#40e0d0">
 	<div align="center">
@@ -9,14 +9,11 @@
 	</div>
 	<div>
 		<ul>
-		<form action="/new_user/genres/submit" method="POST" enctype="multipart/form-data" id="movie_detailForm">
-		{% for movie in movietitles %}
+		<form action="/new_user/genres/submit" method="POST" enctype="multipart/form-data" id="genre_prefernce_form">
+		{% for genre_id, genre in genres %}
 			<li>
-				{{movie.title}}
-				
-				<td><input type="checkbox" name="movie" value = "{{movie.genre_ids}}" /></td>
-				
-				
+				{{genre}}
+				<td><input type="checkbox" name="genre" value = "{{genre_id}}" /></td>
 			</li>
 		{% endfor %}
 		<input type = "submit" value = "OK"/>

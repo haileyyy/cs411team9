@@ -51,10 +51,10 @@ def index():
         email = google_resp.json()['email']
 
         if isEmailUnique(email) == True:
-            cursor.execute('INSERT INTO user (email) VALUES ("{}")'.format(email))
+            cursor.execute('INSERT INTO user (email) VALUES ("{0}")'.format(email))
             conn.commit()
 
-        cursor.execute('SELECT user_id FROM user WHERE email="{}"'.format(email))
+        cursor.execute('SELECT user_id FROM user WHERE email="{0}"'.format(email))
         for x in cursor:
             user_id = x[0]
 
@@ -102,7 +102,7 @@ def get_movies():
     for row in rows:
         userScore[str(row[0])] = row[1]
     
-    movies = default_movies_for_user(userScore, services, 5, watchedMovies)
+    movies = default_movies_for_user(userScore, services, 25, watchedMovies)
     
     for x in movies:
         genre_names = []
@@ -163,22 +163,29 @@ def new_user_services_submit():
 
 @app.route('/new_user/genres', methods=['GET'])
 def new_user_genres():
-    display_movies = initial_movie_display()
-    return render_template('./new_user_genres.html', movietitles = display_movies)
+    genres = []
+
+    cursor.execute('SELECT * FROM genre')
+    for row in cursor:
+        genres.append(row)
+        
+    return render_template('./new_user_genres.html', genres = genres)
 
 @app.route('/new_user/genres/submit', methods=['POST'])
 def new_user_genres_submit():
     user_id = request.cookies.get('user_id', None)
+    request_data = request.form.getlist('genre')
 
-    request_data = request.form.getlist('movie')
-    genrescores = clean_genres(request_data)
-    genres = get_genres()
     userscore = {}
-    for genre in genres:
-       userscore[genre[0]] = 5
-    new_userscores = update_userscores(userscore, genrescores)
 
-    for (genre_id, score) in new_userscores.items():
+    cursor.execute('SELECT * FROM genre')
+    for row in cursor:
+       userscore[row[0]] = 1
+
+    for genre_id in request_data:
+        userscore[int(genre_id)] += len(userscore) // len(request_data)
+
+    for (genre_id, score) in userscore.items():
         cursor.execute('INSERT INTO userScore VALUES ({0}, {1}, {2}) ON DUPLICATE KEY UPDATE user_score={2}'.format(user_id, genre_id, score))
 
     cursor.execute('UPDATE user SET setup_complete=1 WHERE user_id={0}'.format(user_id))
@@ -189,7 +196,7 @@ def new_user_genres_submit():
 @app.route('/update_watched_movies', methods = ['POST'])
 def update_watched_movies():
     request_data = request.form
-    cursor = conn.cursor()
+
     if (request.form['liked'] == "Yes"):
         cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 1))
     else:
