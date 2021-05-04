@@ -109,7 +109,7 @@ def test():
     gscore ={}
     gscore['28'] = 0.2
     services = ['384']
-    watched_movies = ['Iron man']
+    watched_movies = ['123']
     gscore['12'] = 0.5
     print(default_movies_for_user(gscore,services,10,watched_movies))
             
@@ -130,19 +130,21 @@ def default_movies_for_user(userscore, services, num_movies, watched_movies):
     for genre in genrescore:
         genrescore[genre] = math.ceil(genrescore[genre] * num_movies)
 
-        moviessofar =  0
-        services_string = '|'.join(services)
-        watchprovidersstring = "&with_watch_providers=" + services_string + "&watch_region=US"
-        if services == []:
-            watchprovidersstring = ''
-        page = 1
-        while moviessofar < genrescore[genre] and page < 5:
-            response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + tmdb_api_key +
-                                    "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) + "&with_genres=" +
-                                    genre + watchprovidersstring + "&with_watch_monetization_types=flatrate")
-            data = response.json()['results']
+    moviessofar =  0
+    services_string = '|'.join(services)
+    watchprovidersstring = "&with_watch_providers=" + services_string + "&watch_region=US"
+    if services == []:
+        watchprovidersstring = ''
+    page = 1
+    response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + tmdb_api_key +
+                                "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) +
+                                watchprovidersstring + "&with_watch_monetization_types=flatrate")
+    data = response.json()['results']
+
+    for genre in genrescore:
+        while moviessofar < genrescore[genre]:
             for result in data:
-                if result['title'] not in alreadyseen and (str(result['id']) not in watched_movies) and moviessofar < genrescore[genre]:
+                if result['title'] not in alreadyseen and (str(result['id']) not in watched_movies) and moviessofar < genrescore[genre] and str(genre) in str(result['genre_ids']):
                     movie = {}
                     movie['id'] = result['id']
                     movie['title'] = result['title']
@@ -156,6 +158,12 @@ def default_movies_for_user(userscore, services, num_movies, watched_movies):
                         alreadyseen.append(result['title'])
                         moviessofar += 1
             page += 1
+            if moviessofar < genrescore[genre]:
+                response = requests.get("https://api.themoviedb.org/3/discover/movie?api_key=" + tmdb_api_key +
+                        "&language=en-US&region=US&sort_by=popularity.desc&include_adult=false&include_video=false&page=" + str(page) +
+                        watchprovidersstring + "&with_watch_monetization_types=flatrate")
+                data = response.json()['results']
+        moviessofar = 0
 
     random.shuffle(movies)
     if len(movies) - num_movies > 0:
