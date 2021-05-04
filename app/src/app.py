@@ -94,7 +94,7 @@ def get_movies():
     cursor.execute('SELECT movie_id FROM watchedMovies WHERE user_id="{0}"'.format(user_id))
     rows = cursor.fetchall()
     for row in rows:
-        watchedMovies.append(row[0])
+        watchedMovies.append(str(row[0]))
     
     userScore = {}
     cursor.execute('SELECT genre_id, user_score FROM userScore WHERE user_id="{0}"'.format(user_id))
