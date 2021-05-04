@@ -134,7 +134,15 @@ def movie_detail():
     request_data = request.form
 
     sources = sources_from_tmdbID(request.form['tmdb_id'])
-    return render_template('./movie_info.html', movie_sources=sources, movie_id=request.form['tmdb_id'])
+    description = movie_from_id(str(request.form['tmdb_id']))
+    print(description)
+    genres = []
+    for x in description['genre_ids']:
+        cursor.execute('SELECT genre_name FROM genre WHERE genre_id="{0}"'.format(x))
+        rows = cursor.fetchall()
+        for row in rows:
+            genres.append(str(row[0]))
+    return render_template('./movie_info.html', movie_sources=sources, movie_id=request.form['tmdb_id'], movie = description, genre = genres)
 
 @app.route('/new_user/services', methods = ['GET'])
 def new_user_services():
@@ -181,13 +189,12 @@ def new_user_genres_submit():
 @app.route('/update_watched_movies', methods = ['POST'])
 def update_watched_movies():
     request_data = request.form
-    if (request.form['watched'] == "Yes"):
-        cursor = conn.cursor()
-        if (request.form['liked'] == "Yes"):
-            cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 1))
-        else:
-            cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 0))
-        conn.commit()
+    cursor = conn.cursor()
+    if (request.form['liked'] == "Yes"):
+        cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 1))
+    else:
+        cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 0))
+    conn.commit()
     return redirect('home')
 
 @app.route('/check_record', methods = ['GET'])
