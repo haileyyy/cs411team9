@@ -3,20 +3,16 @@
 <head>
 	<title>Pick your streaming services:</title>
 </head>
-<body>
+<body style="background-color:black; color:#40e0d0">
 	<div align="center">
 		<h1> Services </h1>
 	</div>
 	<div>
 		<ul>
-		<form action="/update_user_service" method="POST" enctype="multipart/form-data" id="stream_services_form" name ="streaming_services_form">
-		{% for s in streaming_services %}
+		<form action="/new_user/services/submit" method="POST" enctype="multipart/form-data" id="stream_services_form" name ="streaming_services_form">
+		{% for (id, service_name) in streaming_services %}
 			<li>
-				{{s}}
-				
-				<td><input type="checkbox" name="s" value = "{{s}}" /></td>
-				
-				
+				<td>{{service_name}}<input type="checkbox" name="service" value = "{{id}}" /></td>
 			</li>
 		{% endfor %}
 		<input type = "submit" value = "OK"/>
