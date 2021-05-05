@@ -135,14 +135,15 @@ def movie_detail():
 
     sources = sources_from_tmdbID(request.form['tmdb_id'])
     description = movie_from_id(str(request.form['tmdb_id']))
-    print(description)
     genres = []
+    genre_ids = []
+
     for x in description['genre_ids']:
+        genre_ids.append(x)
         cursor.execute('SELECT genre_name FROM genre WHERE genre_id="{0}"'.format(x))
-        rows = cursor.fetchall()
-        for row in rows:
-            genres.append(str(row[0]))
-    return render_template('./movie_info.html', movie_sources=sources, movie_id=request.form['tmdb_id'], movie = description, genre = genres)
+        for row in cursor:
+            genres.append(row[0])
+    return render_template('./movie_info.html', movie_sources=sources, movie_id=request.form['tmdb_id'], movie = description, genres = genres, genre_ids = genre_ids)
 
 @app.route('/new_user/services', methods = ['GET'])
 def new_user_services():
@@ -195,12 +196,18 @@ def new_user_genres_submit():
 
 @app.route('/update_watched_movies', methods = ['POST'])
 def update_watched_movies():
-    request_data = request.form
+    user_id = request.cookies.get('user_id', None)
 
-    if (request.form['liked'] == "Yes"):
-        cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 1))
+    print(request.form['genre_ids'], flush=True)
+    if (request.form['liked'] == 'Yes'):
+        cursor.execute('INSERT into watchedMovies (user_id, movie_id, liked) VALUES ("{0}", "{1}", "{2}")'.format(user_id, request.form["movie_id"], 1))
+        for genre_id in request.form['genre_ids'].strip('][').split(','):
+            cursor.execute('UPDATE userScore SET user_score = user_score + 1 WHERE user_ID = {0} AND genre_id = {1}'.format(user_id, genre_id))
     else:
-        cursor.execute("INSERT into watchedMovies (user_id, movie_id, liked) VALUES ('{0}', '{1}', '{2}')".format(request.cookies.get('user_id', None), request.form["movie_id"], 0))
+        cursor.execute('INSERT into watchedMovies (user_id, movie_id, liked) VALUES ("{0}", "{1}", "{2}")'.format(user_id, request.form["movie_id"], 0))
+        for genre_id in request.form['genre_ids'].strip('][').split(','):
+            cursor.execute('UPDATE userScore SET user_score = GREATEST(1, user_score - 1) WHERE user_ID = {0} AND genre_id = {1}'.format(user_id, genre_id))
+    
     conn.commit()
     return redirect('home')
 
