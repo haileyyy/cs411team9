@@ -3,26 +3,76 @@
 <head>
 	<title>Movie Information</title>
 </head>
-<body style="background-color:black; color:#40e0d0">
+<style>
+	body {
+          background-color:#1b222b;
+          color: #c5c6c7;
+          font-family: geneva, Cochin, Georgia, Times, 'Times New Roman', serif, Helvetica, sans-serif;
+          font-size: 1.5vw;
+    }
+	h1 {
+          color: #66fcf1;
+          text-align: center;
+          letter-spacing: 1.5x;
+          font-family: Cambria, Verdana, Geneva, Tahoma, sans-serif;
+          font-size: 3vw;
+		  margin-bottom: 5%;
+    }
+	.h4{
+		color: #66fcf1;
+	}
+	img {
+          border: 3px solid #45a29e; 
+    }
+	.logout {
+          color:white;
+          background-color: #1b222b;
+          border: 2px solid #66fcf1;
+          position: absolute;
+          top:20px;
+          right: 5vw;
+          padding: 15px 32px;
+          font-weight: bolder;
+          font-family: Cambria, Helvetica, Arial, Impact;
+    }
+    .logout:hover {
+            background-color: #66fcf2f1;
+            color: #1b222b;
+    }
+	.apply{
+          color:white;
+          background-color: #1b222b;
+          border: 2px solid #66fcf1;
+          font-weight: bold;
+          font-family: cambria, Helvetica, Arial, Impact;
+          padding: 10px 20px;
+		  margin-top: 2%;
+    }
+    .apply:hover {
+            background-color: #66fcf2f1;
+            color: #1b222b;
+    }
+</style>
+<body>
 	<div>
-		<h1 align="center"> More about: {{movie.title}} </h1>
+		<h1> More about {{movie.title}} </h1>
 		<div class="movie" style="display:flex;">
 			<div>
 			  <img src='{{movie.image}}' width=400 height=500/>
 			</div>
 			<div style="margin-left: 20px">
 				<br>
-				<h4>Description: {{movie.description}}</h4>
+				<h4 style="color: #66fcf1;">Description:</h4> {{movie.description}}
 				<br>
-				<h4>IMDB Rating: {{movie.imdb_rating}} / 10.0</h4>
+				<h4 style="color: #66fcf1;">IMDB Rating:</h4> {{movie.imdb_rating}} / 10.0
 				<br>
-				<b>Genres:</b>
+				<b style="color: #66fcf1;">Genres:</b>
 				{% for genre in genres %}
 					<b>{{genre}}</b> -
 				{% endfor %}
 				<br>
 				<br>
-				<b>Sources:</b>
+				<b style="color: #66fcf1;">Sources:</b>
 				{% for source in movie_sources %}
 					<b>{{source}}</b> - 
 				{% endfor %}
@@ -37,7 +87,8 @@
 					
 					<input type="hidden" id="movie_id" name="movie_id" value="{{movie_id}}">
 					<input type="hidden" id="genre_ids" name="genre_ids" value="{{genre_ids}}">
-					<button type="submit" id="button1" style="display:none" value = "Submit"> Apply </button>
+          
+					<button class = "apply" type="submit" id="button1" style="display:none" value = "Submit"> Apply </button>
 				</form>
 				<script>
 					function showButton() {
@@ -59,7 +110,7 @@
 		
 	</div>
 	
-	
+	<a href='/logout'><button class ="logout">Logout</button></a>
 	
 </body>
 </html>
