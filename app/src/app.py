@@ -102,7 +102,7 @@ def get_movies():
     for row in rows:
         userScore[str(row[0])] = row[1]
     
-    movies = default_movies_for_user(userScore, services, 25, watchedMovies)
+    movies = default_movies_for_user(userScore, services, 10, watchedMovies)
     
     for x in movies:
         genre_names = []
