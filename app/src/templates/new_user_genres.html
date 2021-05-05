@@ -3,26 +3,75 @@
 <head>
 	<title>Pick some movies you're interested in!</title>
 </head>
-<body style="background-color:black; color:#40e0d0">
+<style>
+	body {
+          background-color:#1b222b;
+          color: #c5c6c7;
+          font-family: geneva, Cochin, Georgia, Times, 'Times New Roman', serif, Helvetica, sans-serif;
+          font-size: 1.5vw;
+    }
+    h1 {
+          color: #66fcf1;;
+          text-align: center;
+          letter-spacing: 1.5x;
+          font-family: Cambria, Verdana, Geneva, Tahoma, sans-serif;
+          font-size: 3.25vw;
+        
+    }
+	.okay{
+          color:white;
+          background-color: #1b222b;
+          border: 2px solid #66fcf1;
+          font-weight: bold;
+          font-family: cambria, Helvetica, Arial, Impact;
+          padding: 10px 20px;
+		  margin-top: 2%;
+    }
+    .okay:hover {
+            background-color: #66fcf2f1;
+            color: #1b222b;
+    }
+	.logout {
+          color:white;
+          background-color: #1b222b;
+          border: 2px solid #66fcf1;
+          position: absolute;
+          top:20px;
+          right: 90px;
+          padding: 15px 32px;
+          font-weight: bolder;
+          font-family: Cambria, Helvetica, Arial, Impact;
+    }
+    .logout:hover {
+            background-color: #66fcf2f1;
+            color: #1b222b;
+    }
+</style>
+<body>
 	<div align="center">
-		<h1> Movies </h1>
+		<h1> Please Pick Some Movies You're interested In! </h1>
 	</div>
 	<div>
 		<ul>
 		<form action="/new_user/genres/submit" method="POST" enctype="multipart/form-data" id="movie_detailForm">
 		{% for movie in movietitles %}
 			<li>
+				<td><input type="checkbox" name="movie" value = "{{movie.genre_ids}}" /></td>
 				{{movie.title}}
 				
-				<td><input type="checkbox" name="movie" value = "{{movie.genre_ids}}" /></td>
+				
 				
 				
 			</li>
 		{% endfor %}
-		<input type = "submit" value = "OK"/>
+		<div>
+
+		</div>
+		<input class="okay" type = "submit" value = "OK"/>
 		</form>
 		
 		</ul>
 	</div>
+	<a href='/logout'><button class ="logout">Logout</button></a>
 </body>
 </html>
