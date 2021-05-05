@@ -54,6 +54,20 @@
             background-color: #66fcf2f1;
             color: #1b222b;
         }
+        .more{
+          color:white;
+          background-color: #1b222b;
+          border: 2px solid #66fcf1;
+          font-weight: bold;
+          font-family: cambria, Helvetica, Arial, Impact;
+          padding: 20px 40px;
+          position: relative;
+          margin-left: 45%;
+        }
+        .more:hover {
+            background-color: #66fcf2f1;
+            color: #1b222b;
+        }
       </style>
     <body>
       <h1>MOVIE RECOMMENDATIONS</h1>
@@ -87,8 +101,11 @@
           </div>
           
         </div>
-		  {% endfor %}
-    
+		    {% endfor %}
+      <div>
       <a href='/logout'><button class ="logout">Logout</button></a>
+      </div>
+
+      <a href='/home'><button class ="more">More Movies....</button></a>
     </body>
 </html>
