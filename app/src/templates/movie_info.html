@@ -67,8 +67,8 @@
 				<h4 style="color: #66fcf1;">IMDB Rating:</h4> {{movie.imdb_rating}} / 10.0
 				<br>
 				<b style="color: #66fcf1;">Genres:</b>
-				{% for g in genre %}
-					<b>{{g}}</b> -
+				{% for genre in genres %}
+					<b>{{genre}}</b> -
 				{% endfor %}
 				<br>
 				<br>
@@ -86,6 +86,8 @@
 					<label id="liked2label" for="liked1"> No </label>
 					
 					<input type="hidden" id="movie_id" name="movie_id" value="{{movie_id}}">
+					<input type="hidden" id="genre_ids" name="genre_ids" value="{{genre_ids}}">
+          
 					<button class = "apply" type="submit" id="button1" style="display:none" value = "Submit"> Apply </button>
 				</form>
 				<script>

@@ -53,8 +53,7 @@ def clean_genres(genrelist):
 
 def update_userscores(userscore, genrescores):
     for genre in genrescores:
-        for x in range(genrescores[genre]):
-            userscore[genre] += 1
+        userscore[genre] += genrescores[genre]
     return userscore
 
 def get_genres():
